@@ -239,7 +239,8 @@ function getter(options) {
 					"\\s*font-family:\\s*'([^']+)';",
 					"\\s*font-style:\\s*(\\w+);",
 					"\\s*font-weight:\\s*(\\w+);",
-					"\\s*src:\\s*local\\('([^']+)'\\),\\s*local\\('([^']+)'\\),\\s*url\\(([^)]+)\\)[^;]*;",
+					"\\s*src:(?:\\s*(local\\('[^']+'\\),))?(?:\\s*(local\\('[^']+'\\),))?",
+					"\\s*url\\(([^)]+)\\)[^;]*;",
 					".*(?:unicode-range:([^;]+);)?",
 				].join(''), 'm');
 
@@ -254,8 +255,8 @@ function getter(options) {
 						weight: weight,
 						name: name.replace(/\s/g, '_'),
 						url: url,
-						local1: local1,
-						local2: local2,
+						local1: (typeof local1 != 'undefined' ? local1 : ''),
+						local2: (typeof local2 != 'undefined' ? local2 : ''),
 						range: range || 'U+0-10FFFF'
 					};
 				}
@@ -279,7 +280,7 @@ function getter(options) {
 				'	font-style: $style;',
 				'	font-weight: $weight;',
 				'	font-display: ' + options.fontDisplayType + ';',
-				'	src: local(\'$local1\'), local(\'$local2\'), url($uri)' + format + ';',
+				'	src: $local1 $local2 url($uri)' + format + ';',
 				'	unicode-range: $range;',
 				'}'
 			].join('\n');
